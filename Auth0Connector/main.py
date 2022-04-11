@@ -37,11 +37,12 @@ match = re.match(pattern, str(LOG_ANALYTICS_URI))
 if not match:
     raise Exception("Invalid Log Analytics Uri.")
 
-HOST = os.environ['HOST']
-API_PATH = os.environ['API_PATH']
+DOMAIN = os.environ['DOMAIN']
+API_PATH = DOMAIN + '/api/v2/logs'
 CLIENT_ID = os.environ['CLIENT_ID']
 CLIENT_SECRET = os.environ['CLIENT_SECRET']
-AUDIENCE = HOST + '/api/v2'
+AUDIENCE = DOMAIN + '/api/v2/'
+
 
 def main():
     # state_manager = StateManager(FILE_SHARE_CONNECTION_STRING, file_path='auth0_test_confing.json')
@@ -52,11 +53,14 @@ def main():
     state_manager = StateManager(FILE_SHARE_CONNECTION_STRING, file_path='auth0_test_confing.json')
     config = json.loads(state_manager.get())
     logging.info(f'Config loaded\n\t{config}')
-    connector = Auth0Connector(HOST, API_PATH, CLIENT_ID, CLIENT_SECRET, AUDIENCE)
+    connector = Auth0Connector(DOMAIN, API_PATH, CLIENT_ID, CLIENT_SECRET, AUDIENCE)
     last_log_id, events = connector.get_log_events(config)
 
     config['last_log_id'] = last_log_id
-    config['last_date'] = events[0]['date'] if last_log_id else config['last_date']
+    try:
+        config['last_date'] = events[0]['date'] if last_log_id else config['last_date']
+    except IndexError:
+        pass
     logging.info("new config" + str(config))
     state_manager.post(json.dumps(config))
     sentinel = AzureSentinelConnector(LOG_ANALYTICS_URI, WORKSPACE_ID, SHARED_KEY, LOG_TYPE, queue_size=1000)
@@ -67,13 +71,13 @@ def main():
 
 
 class Auth0Connector:
-    def __init__(self, host, api_path, client_id, client_secret, audience):
-        self.host = host
+    def __init__(self, domain, api_path, client_id, client_secret, audience):
+        self.domain = domain
         self.api_path = api_path
         self.client_id = client_id
         self.client_secret = client_secret
         self.audience = audience
-        self.uri = self.host + self.api_path
+        self.uri = self.domain + self.api_path
         self.token = None
         self.header = None
 
@@ -126,7 +130,7 @@ class Auth0Connector:
                 'audience': self.audience
             }
         header = {'content-type': "application/x-www-form-urlencoded"}
-        resp = requests.post(self.host + '/oauth/token', headers=header, data=params)
+        resp = requests.post(self.domain + '/oauth/token', headers=header, data=params)
         try:
             token = resp.json()['access_token']
         except KeyError:
