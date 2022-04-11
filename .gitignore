@@ -1,0 +1,5 @@
+Auth0Connector/.env
+venv
+examples
+Auth0Connector/auth0_test_config.json
+.*
