@@ -3,7 +3,6 @@ import requests
 import os
 import re
 import json
-import sys
 from typing import Tuple, List, Union
 from datetime import datetime as dt
 from datetime import timedelta
@@ -11,10 +10,6 @@ from datetime import timedelta
 
 from Auth0Connector.sentinel_connector import AzureSentinelConnector
 from Auth0Connector.state_manager import StateManager
-
-from pprint import pprint
-from dotenv import load_dotenv
-load_dotenv()
 
 
 WORKSPACE_ID = os.environ['WorkspaceID']
@@ -24,8 +19,8 @@ FILE_SHARE_CONNECTION_STRING = os.environ['AzureWebJobsStorage']
 LOG_TYPE = 'Auth0'
 
 MAX_SCRIPT_EXEC_TIME_MINUTES = 5
-# logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(logging.ERROR)
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(logging.ERROR)
+# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 LOG_ANALYTICS_URI = os.environ.get('logAnalyticsUri')
 
@@ -45,10 +40,6 @@ AUDIENCE = DOMAIN + '/api/v2/'
 
 
 def main():
-    # state_manager = StateManager(FILE_SHARE_CONNECTION_STRING, file_path='auth0_test_confing.json')
-    # config = {'last_log_id': '', 'last_date': ''}
-    # state_manager.post(json.dumps(config))
-    # exit()
     logging.info('Script started.')
     state_manager = StateManager(FILE_SHARE_CONNECTION_STRING, file_path='auth0_test_confing.json')
     config = json.loads(state_manager.get())
@@ -110,8 +101,8 @@ class Auth0Connector:
 
     def _get_last_log_id(self, config: dict) -> Union[str, None]:
         if config['last_log_id'] == '':
-            # start_time = str(dt.now() - timedelta(hours=1))
-            start_time = '2022-04-06T14:45:15.861Z'
+            start_time = str(dt.now() - timedelta(hours=1))
+            # start_time = '2022-04-06T14:45:15.861Z'
             params = {'q': f'date:[{start_time} TO {str(dt.now())}]',
                       'sort': 'date:1'}
             resp = requests.get(self.uri, headers=self.header, params=params)
