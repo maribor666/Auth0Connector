@@ -154,11 +154,14 @@
                         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.insights/components', variables('FunctionName')), '2015-05-01').InstrumentationKey]",
                         "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(resourceId('microsoft.insights/components', variables('FunctionName')), '2015-05-01').ConnectionString]",
                         "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('FunctionName')),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', toLower(variables('FunctionName'))), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('StorageSuffix')))]",
-                        "SOPHOS_TOKEN": "[parameters('Sophos API Access URL and Headers')]",
-                        "WORKSPACE_ID": "[parameters('AzureSentinelWorkspaceId')]",
-                        "SHARED_KEY": "[parameters('AzureSentinelSharedKey')]",
+                        "DOMAIN": "[parameters('Auth0 API Domain')]",
+                        "CLIENT_ID": "[parameters('Auth0 API Client Id')]",
+                        "CLIENT_SECRET": "[parameters('Auth0 API Client Secret')]",
+
+                        "WorkspaceID": "[parameters('AzureSentinelWorkspaceId')]",
+                        "WorkspaceKey": "[parameters('AzureSentinelSharedKey')]",
                         "logAnalyticsUri": "[variables('LogAnaltyicsUri')]",
-                        "WEBSITE_RUN_FROM_PACKAGE": "https://aka.ms/sentinel-SophosEP-functionapp"
+                        "WEBSITE_RUN_FROM_PACKAGE": "https://aka.ms/sentinel-Auth0-functionapp"
                     }
                 }
             ]
