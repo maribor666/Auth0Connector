@@ -138,6 +138,3 @@ class Auth0Connector:
 
     def _get_header(self):
         return {'Authorization': 'Bearer ' + self.token}
-
-
-main()
