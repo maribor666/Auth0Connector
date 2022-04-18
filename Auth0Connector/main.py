@@ -3,6 +3,7 @@ import requests
 import os
 import re
 import json
+import sys
 from typing import Tuple, List, Union
 from datetime import datetime as dt
 from datetime import timedelta
@@ -10,7 +11,9 @@ from datetime import timedelta
 
 from Auth0Connector.sentinel_connector import AzureSentinelConnector
 from Auth0Connector.state_manager import StateManager
+# from dotenv import load_dotenv
 
+# load_dotenv()
 
 WORKSPACE_ID = os.environ['WorkspaceID']
 SHARED_KEY = os.environ['WorkspaceKey']
@@ -33,11 +36,10 @@ if not match:
     raise Exception("Invalid Log Analytics Uri.")
 
 DOMAIN = os.environ['DOMAIN']
-API_PATH = DOMAIN + '/api/v2/logs'
+API_PATH = '/api/v2/logs'
 CLIENT_ID = os.environ['CLIENT_ID']
 CLIENT_SECRET = os.environ['CLIENT_SECRET']
 AUDIENCE = DOMAIN + '/api/v2/'
-
 
 def main():
     logging.info('Script started.')
