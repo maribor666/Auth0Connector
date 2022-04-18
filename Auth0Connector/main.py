@@ -8,7 +8,7 @@ from typing import Tuple, List, Union
 from datetime import datetime as dt
 from datetime import timedelta
 
-
+import azure.functions as func
 from Auth0Connector.sentinel_connector import AzureSentinelConnector
 from Auth0Connector.state_manager import StateManager
 # from dotenv import load_dotenv
@@ -42,7 +42,7 @@ CLIENT_SECRET = os.environ['CLIENT_SECRET']
 AUDIENCE = DOMAIN + '/api/v2/'
 
 
-def main():
+def main(mytimer: func.TimerRequest):
     logging.info('Script started.')
     state_manager = StateManager(FILE_SHARE_CONNECTION_STRING, file_path='auth0_confing.json')
     config_string = state_manager.get()
