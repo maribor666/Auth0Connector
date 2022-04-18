@@ -11,9 +11,7 @@ from datetime import timedelta
 import azure.functions as func
 from Auth0Connector.sentinel_connector import AzureSentinelConnector
 from Auth0Connector.state_manager import StateManager
-# from dotenv import load_dotenv
 
-# load_dotenv()
 
 WORKSPACE_ID = os.environ['WorkspaceID']
 SHARED_KEY = os.environ['WorkspaceKey']
@@ -23,7 +21,7 @@ LOG_TYPE = 'Auth0'
 
 MAX_SCRIPT_EXEC_TIME_MINUTES = 5
 logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(logging.ERROR)
-# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+
 
 LOG_ANALYTICS_URI = os.environ.get('logAnalyticsUri')
 
@@ -96,11 +94,14 @@ class Auth0Connector:
         events = resp.json()
         next_link = resp.headers['Link']
         next_uri = next_link[next_link.index('<') + 1:next_link.index('>')]
+        page_num = 1
         while resp.json():
             resp = requests.get(next_uri, headers=self.header)
             next_link = resp.headers['Link']
             next_uri = next_link[next_link.index('<') + 1:next_link.index('>')]
             events.extend(resp.json())
+            logging.info(f'\t#{page_num} extracted')
+            page_num += 1
         events.sort(key=lambda item: item['date'], reverse=True)
         last_log_id = events[0]['log_id']
         logging.info(f'\t New last log id: {last_log_id}\n at date {events[0]["date"]}. Events extracted.')
