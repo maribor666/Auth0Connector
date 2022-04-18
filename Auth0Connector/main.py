@@ -47,7 +47,7 @@ def main(mytimer: func.TimerRequest):
     if config_string:
         config = json.loads(config_string)
     else:
-        config = json.loads('{"last_log_id": "","last_date": ""}')
+        config = {"last_log_id": "", "last_date": ""}
     logging.info(f'Config loaded\n\t{config}')
     connector = Auth0Connector(DOMAIN, API_PATH, CLIENT_ID, CLIENT_SECRET, AUDIENCE)
     last_log_id, events = connector.get_log_events(config)
